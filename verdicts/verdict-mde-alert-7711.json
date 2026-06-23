@@ -1,0 +1,20 @@
+{
+  "classification": "TP",
+  "confidence_score": 100,
+  "event_id": "mde-alert-7711",
+  "mitre_mapping": {
+    "tactic": "Command and Control",
+    "technique": "Ingress Tool Transfer (T1105)"
+  },
+  "override_applied": "none",
+  "processed_at": "2024-07-30T12:00:00Z",
+  "remediation_actions": [
+    "Isolate the affected host (192.168.1.105).",
+    "Investigate user 'jsmith' account for compromise.",
+    "Perform a full endpoint forensics and malware scan on the affected host.",
+    "Block 'malicious-domain.xyz' and IP '198.51.100.42' at network perimeter.",
+    "Delete 'C:\\Windows\\Temp\\payload.exe' and analyze its content for further IOCs."
+  ],
+  "tenant_id": "tenant-alpha",
+  "threat_reasoning": "The event indicates the use of 'certutil.exe', a legitimate Windows utility (LOLBin), to download an executable ('payload.exe') from a remote and identified malicious domain ('malicious-domain.xyz'). The download command '-urlcache -split -f' is a known technique for file transfer by adversaries, often for staging malware. The parent process 'cmd.exe' initiating this command further supports the intent of command-line execution. The file is saved to a temporary directory ('C:\\Windows\\Temp\\'), a common staging area for malicious payloads. The domain 'malicious-domain.xyz' has reputation hits on VirusTotal (2/91 malicious), confirming its suspicious nature. This activity is highly indicative of an attacker attempting to transfer and execute malicious code on the endpoint."
+}

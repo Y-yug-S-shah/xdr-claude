@@ -1,0 +1,20 @@
+{
+  "classification": "TP",
+  "confidence_score": 80,
+  "event_id": "cs-alert-4402",
+  "mitre_mapping": {
+    "tactic": "Execution",
+    "technique": "T1059.001 PowerShell"
+  },
+  "override_applied": "none",
+  "processed_at": "2024-07-30T12:00:00Z",
+  "remediation_actions": [
+    "Initiate incident response for the affected host.",
+    "Containment: Isolate the endpoint where the PowerShell script was executed.",
+    "Investigate the 'update_dns_settings.ps1' script content. Determine why it has an empty SHA256 hash (e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855).",
+    "Review 'admin_dave' user activity for other suspicious processes or commands.",
+    "Perform forensic analysis on the affected endpoint to identify root cause and scope of compromise."
+  ],
+  "tenant_id": "tenant-alpha",
+  "threat_reasoning": "A PowerShell script named 'update_dns_settings.ps1' was executed by 'admin_dave' using the '-ExecutionPolicy Bypass' flag. While PowerShell is a legitimate administrative tool and the user is an administrator, the key finding is that the SHA256 hash of the 'update_dns_settings.ps1' script (e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855) corresponds to an empty file or string. This is highly suspicious as a functional administrative script should not be empty. This could indicate a 'fileless' execution attempt, a script that was deleted immediately after execution, a placeholder, or a failed attempt by an adversary. The use of '-ExecutionPolicy Bypass' is also a strong indicator of an attempt to circumvent security controls. Despite the execution being initiated by 'explorer.exe' (suggesting user-initiated action), the empty script hash and bypass policy flag elevate this to a high-confidence threat requiring immediate investigation."
+}

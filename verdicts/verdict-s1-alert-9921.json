@@ -1,0 +1,19 @@
+{
+  "classification": "TP",
+  "confidence_score": 100,
+  "event_id": "s1-alert-9921",
+  "mitre_mapping": {
+    "tactic": "Execution",
+    "technique": "PowerShell"
+  },
+  "override_applied": "none",
+  "processed_at": "2024-07-28T12:00:00Z",
+  "remediation_actions": [
+    "Isolate the affected host immediately.",
+    "Terminate the malicious process (C:\\Users\\Public\\svchost.exe).",
+    "Block destination IP 203.0.113.12 and domain c2-server.com at network perimeter.",
+    "Initiate full forensic investigation on the compromised host for persistence and lateral movement."
+  ],
+  "tenant_id": "tenant-beta",
+  "threat_reasoning": "The alert indicates highly suspicious process creation and network activity. A process named 'svchost.exe' is executing from a non-standard and user-writable directory (C:\\Users\\Public\\), which is a common masquerading technique. The parent process is 'powershell.exe' executing an encoded command, a prevalent method for malicious payload delivery (T1059.001 - PowerShell). Furthermore, this suspicious process is attempting to establish an outbound connection to 'c2-server.com' on port 4444. The domain 'c2-server.com' explicitly suggests Command and Control (C2) activity, and its young age (18 days) further reinforces its suspicious nature, often indicative of newly stood up malicious infrastructure. The combination of these indicators strongly points to a genuine compromise and active C2 communication."
+}

