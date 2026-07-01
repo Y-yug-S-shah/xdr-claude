@@ -1,0 +1,15 @@
+{
+  "classification": "FP",
+  "confidence_score": 0,
+  "event_id": "cs-windowsupdate-04",
+  "mitre_mapping": {
+    "tactic": "Defense Evasion",
+    "technique": "Masquerading"
+  },
+  "override_applied": "none",
+  "processed_at": "2026-06-25T17:35:00Z",
+  "remediation_actions": [],
+  "tenant_id": "tenant-beta",
+  "threat_reasoning": "The event involves the execution of the Microsoft Windows Malicious Software Removal Tool (mrt.exe) from its legitimate system path. The process is signed by Microsoft and exhibits no malicious behavioral markers. Base 0 - Microsoft verified signature (-30) = -30.",
+  "model_used": "models/gemini-3.1-flash-lite"
+}

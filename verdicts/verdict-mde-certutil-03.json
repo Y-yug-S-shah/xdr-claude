@@ -1,0 +1,21 @@
+{
+  "classification": "TP",
+  "confidence_score": 95,
+  "event_id": "mde-certutil-03",
+  "mitre_mapping": {
+    "tactic": "Command and Control",
+    "technique": "Ingress Tool Transfer (T1105)"
+  },
+  "override_applied": "none",
+  "processed_at": "2026-06-25T11:05:00Z",
+  "remediation_actions": [
+    "Isolate host",
+    "Terminate process",
+    "Delete file",
+    "Revoke user sessions",
+    "Block domain at proxy"
+  ],
+  "tenant_id": "tenant-alpha",
+  "threat_reasoning": "Base 0 + URLhaus match (+40) + AbuseIPDB score 80 on destination (+30) + LOLBin spawning shell/file download (+25) = 95. The use of certutil to download an executable from a known malicious domain is a classic stage-one infection technique confirmed by active URLhaus intelligence.",
+  "model_used": "models/gemini-3.1-flash-lite"
+}

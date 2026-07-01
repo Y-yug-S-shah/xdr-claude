@@ -1,0 +1,17 @@
+{
+  "classification": "FP",
+  "confidence_score": 0,
+  "event_id": "cs-devops-01",
+  "mitre_mapping": {
+    "tactic": "TA0002",
+    "technique": "T1204.002"
+  },
+  "override_applied": "none",
+  "processed_at": "2026-06-25T15:00:00Z",
+  "remediation_actions": [
+    "None"
+  ],
+  "tenant_id": "tenant-alpha",
+  "threat_reasoning": "The event involves a standard git clone operation performed by a Jenkins service account. As this is a verified DevOps tool executing from the expected file path, the base score of 0 is adjusted by -30 due to legitimate process activity and signature trust. Base 0 - Verified software activity (-30) = -30 total.",
+  "model_used": "models/gemini-3.1-flash-lite"
+}

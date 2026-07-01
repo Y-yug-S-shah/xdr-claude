@@ -1,0 +1,19 @@
+{
+  "classification": "TP",
+  "confidence_score": 65,
+  "event_id": "cs-obfuscated-tricky-07",
+  "mitre_mapping": {
+    "tactic": "Execution",
+    "technique": "Command and Scripting Interpreter: PowerShell"
+  },
+  "override_applied": "none",
+  "processed_at": "2026-06-25T18:15:00Z",
+  "remediation_actions": [
+    "isolate_host",
+    "kill_process",
+    "reset_user_credentials"
+  ],
+  "tenant_id": "tenant-beta",
+  "threat_reasoning": "The alert is a True Positive due to the presence of active URLhaus threat matches for the downloaded payload. Base 0 + URLhaus Active Match (+40) + Obfuscated/Suspicious Command Line pattern (+25) = 65 total confidence score. The command attempts to download and execute an external binary using obfuscated PowerShell syntax.",
+  "model_used": "models/gemini-3.1-flash-lite"
+}

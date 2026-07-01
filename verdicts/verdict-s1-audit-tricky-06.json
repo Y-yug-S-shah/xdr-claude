@@ -1,0 +1,17 @@
+{
+  "classification": "FP",
+  "confidence_score": 0,
+  "event_id": "s1-audit-tricky-06",
+  "mitre_mapping": {
+    "tactic": "Discovery",
+    "technique": "T1087.002"
+  },
+  "override_applied": "none",
+  "processed_at": "2026-06-25T18:00:00Z",
+  "remediation_actions": [
+    "None"
+  ],
+  "tenant_id": "tenant-alpha",
+  "threat_reasoning": "The execution of nltest.exe originated from an authorized compliance management software (compliance_auditor.exe), indicating an administrative audit operation rather than malicious discovery. Base 0 - Verified Microsoft signature (-30) = -30 points. The activity is classified as benign administrative behavior.",
+  "model_used": "models/gemini-3.1-flash-lite"
+}

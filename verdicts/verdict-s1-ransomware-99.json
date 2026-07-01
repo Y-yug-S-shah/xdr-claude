@@ -1,0 +1,20 @@
+{
+  "classification": "TP",
+  "confidence_score": 100,
+  "event_id": "s1-ransomware-99",
+  "mitre_mapping": {
+    "tactic": "Impact",
+    "technique": "Inhibit System Recovery"
+  },
+  "override_applied": "none",
+  "processed_at": "2026-06-25T14:25:00Z",
+  "remediation_actions": [
+    "isolate_host",
+    "terminate_process",
+    "disable_user_account",
+    "revoke_all_tokens"
+  ],
+  "tenant_id": "tenant-beta",
+  "threat_reasoning": "Base 0 + LOLBin abuse (vssadmin delete) (+25) + obfuscated PowerShell parent command line (+25) + AbuseIPDB destination IP score of 90 (+30) + high-frequency/network activity to domain registered under 30 days (+25) = 105, capped at 100. The activity matches classic ransomware behavior of inhibiting recovery followed by external C2 communication.",
+  "model_used": "models/gemini-3.1-flash-lite"
+}

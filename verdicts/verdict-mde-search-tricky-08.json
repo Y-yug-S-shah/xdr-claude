@@ -1,0 +1,17 @@
+{
+  "classification": "FP",
+  "confidence_score": 0,
+  "event_id": "mde-search-tricky-08",
+  "mitre_mapping": {
+    "tactic": "Discovery",
+    "technique": "File and Directory Discovery"
+  },
+  "override_applied": "none",
+  "processed_at": "2026-06-25T18:30:00Z",
+  "remediation_actions": [
+    "None - Authorized administrative search"
+  ],
+  "tenant_id": "tenant-alpha",
+  "threat_reasoning": "The process activity involves a Select-String command used for auditing files for specific security-related keywords. Per the EDR evaluation rubric, administrative search commands scanning for keywords are benign read sweeps and must be classified as False Positive. Base 0 + 0 = 0.",
+  "model_used": "models/gemini-3.1-flash-lite"
+}

@@ -522,7 +522,8 @@ def call_gemini(system_prompt, event_json, enrichment_summary, api_key, mock_llm
                 "threat_reasoning": "The alert captures cmd.exe launching certutil.exe to fetch an external binary. The payload domain has active URLhaus matches and 12 VT engines flagging it. This is a standard LOLBin download execution. Math: Base 0 + Threat Intel (+40) + AbuseIPDB (+30) + LOLBin command (+25) = 95.",
                 "remediation_actions": ["Isolate host 192.168.1.105", "Terminate certutil.exe process", "Delete downloaded payload file"],
                 "mitre_mapping": {"tactic": "Defense Evasion", "technique": "T1218.003 - System Binary Proxy Execution: Certutil"},
-                "processed_at": datetime.now(timezone.utc).isoformat()
+                "processed_at": datetime.now(timezone.utc).isoformat(),
+                "model_used": "mock"
             }
         elif "public" in cmd or "public" in proc:
             return {
@@ -534,7 +535,8 @@ def call_gemini(system_prompt, event_json, enrichment_summary, api_key, mock_llm
                 "threat_reasoning": "Rogue system process name svchost.exe is running from user Public directory instead of System32 (Process Masquerading). It established a network connection to a high AbuseIPDB confidence score IP. Math: Base 0 + VT (+40) + AbuseIPDB (+30) + Obfuscation (+25) + Masquerading (+30) = 125 (Capped at 100).",
                 "remediation_actions": ["Isolate host 172.16.50.8", "Terminate rogue svchost.exe process", "Quarantine public folder files"],
                 "mitre_mapping": {"tactic": "Defense Evasion", "technique": "T1036.005 - Masquerading: Match Legitimate Name or Location"},
-                "processed_at": datetime.now(timezone.utc).isoformat()
+                "processed_at": datetime.now(timezone.utc).isoformat(),
+                "model_used": "mock"
             }
         else:
             return {
@@ -546,50 +548,69 @@ def call_gemini(system_prompt, event_json, enrichment_summary, api_key, mock_llm
                 "threat_reasoning": "The script runs from a verified administrative update path specified in the tenant's allowlist. The script hash contains 0 flags on VT. Allowlist overrides score to 0.",
                 "remediation_actions": [],
                 "mitre_mapping": {"tactic": "None", "technique": "None"},
-                "processed_at": datetime.now(timezone.utc).isoformat()
+                "processed_at": datetime.now(timezone.utc).isoformat(),
+                "model_used": "mock"
             }
             
-    # Live Gemini invocation with automatic rate-limit retries
-    max_retries = 3
-    retry_delay = 12.0
-    for attempt in range(max_retries):
-        try:
-            logger.info(f"Querying Gemini API for alert {event_json.get('event_id')} (Attempt {attempt+1}/{max_retries})...")
-            genai.configure(api_key=api_key)
-            
-            # Load gemini-2.5-flash with strict schema validation
-            model = genai.GenerativeModel(
-                model_name='models/gemini-2.5-flash',
-                system_instruction=system_prompt,
-                generation_config={
-                    "response_mime_type": "application/json",
-                    "response_schema": TriageVerdict
-                }
-            )
-            
-            response = model.generate_content(user_content)
-            result_json = json.loads(response.text)
-            return result_json
-        except Exception as e:
-            err_str = str(e)
-            if "429" in err_str or "quota" in err_str.lower() or "limit" in err_str.lower():
-                if attempt < max_retries - 1:
-                    logger.warning(f"Gemini API rate limit hit (429). Retrying in {retry_delay} seconds...")
-                    time.sleep(retry_delay)
-                    retry_delay *= 1.5
-                    continue
-            logger.error(f"Error querying Gemini: {e}")
-            return {
-                "event_id": event_json.get("event_id"),
-                "tenant_id": event_json.get("tenant_id"),
-                "classification": "UNKNOWN",
-                "confidence_score": 0,
-                "override_applied": "none",
-                "threat_reasoning": f"LLM Call failed: {str(e)}",
-                "remediation_actions": [],
-                "mitre_mapping": {"tactic": "None", "technique": "None"},
-                "processed_at": datetime.now(timezone.utc).isoformat()
-            }
+    # Live Gemini invocation with fallback model chain
+    models_to_try = [
+        'models/gemini-3.5-flash',
+        'models/gemini-3.1-flash-lite',
+        'models/gemini-2.5-flash'
+    ]
+    
+    last_exception = None
+    for model_name in models_to_try:
+        max_retries = 2
+        retry_delay = 5.0
+        for attempt in range(max_retries):
+            try:
+                logger.info(f"Querying Gemini API using {model_name} for alert {event_json.get('event_id')} (Attempt {attempt+1}/{max_retries})...")
+                genai.configure(api_key=api_key)
+                
+                model = genai.GenerativeModel(
+                    model_name=model_name,
+                    system_instruction=system_prompt,
+                    generation_config={
+                        "response_mime_type": "application/json",
+                        "response_schema": TriageVerdict
+                    }
+                )
+                
+                response = model.generate_content(user_content)
+                result_json = json.loads(response.text)
+                result_json["model_used"] = model_name
+                return result_json
+            except Exception as e:
+                last_exception = e
+                err_str = str(e)
+                if "429" in err_str or "quota" in err_str.lower() or "limit" in err_str.lower():
+                    if attempt < max_retries - 1:
+                        logger.warning(f"Rate limit hit on {model_name}. Retrying in {retry_delay} seconds...")
+                        time.sleep(retry_delay)
+                        retry_delay *= 1.5
+                        continue
+                    else:
+                        logger.warning(f"Quota exhausted for {model_name}. Attempting next fallback model...")
+                        break
+                else:
+                    logger.warning(f"Error calling model {model_name}: {e}. Attempting next fallback model...")
+                    break
+                    
+    # If all models fail, return the error verdict
+    logger.error(f"All Gemini models failed to process the alert. Last error: {last_exception}")
+    return {
+        "event_id": event_json.get("event_id"),
+        "tenant_id": event_json.get("tenant_id"),
+        "classification": "UNKNOWN",
+        "confidence_score": 0,
+        "override_applied": "none",
+        "threat_reasoning": f"LLM Call failed on all fallback models. Last error: {str(last_exception)}",
+        "remediation_actions": [],
+        "mitre_mapping": {"tactic": "None", "technique": "None"},
+        "processed_at": datetime.now(timezone.utc).isoformat(),
+        "model_used": "none (failed)"
+    }
 
 # Main Orchestrator Execution
 def main():
@@ -692,12 +713,25 @@ def main():
         # 5. Call LLM
         verdict = call_gemini(system_prompt, normalized, enrichment_summary, gemini_key, use_mock_llm)
         
+        # Clamp confidence score to range [0, 100] as specified in system instructions
+        if verdict and "confidence_score" in verdict:
+            try:
+                raw_score = int(verdict["confidence_score"])
+                verdict["confidence_score"] = max(0, min(100, raw_score))
+            except (ValueError, TypeError):
+                pass
+        
         # 6. Save Report
         out_path = f"verdicts/verdict-{normalized['event_id']}.json"
         with open(out_path, 'w', encoding='utf-8') as out_f:
             json.dump(verdict, out_f, indent=2)
             
         logger.info(f"Verdict saved to {out_path}: {verdict.get('classification')} (Score: {verdict.get('confidence_score')})")
+        
+        # Add a short delay to avoid rate limits (429) on the Gemini API
+        if idx < len(alerts) - 1 and not use_mock_llm:
+            logger.info("Sleeping for 10 seconds to avoid API rate limits...")
+            time.sleep(10.0)
 
 if __name__ == "__main__":
     main()

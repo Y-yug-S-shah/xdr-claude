@@ -1,0 +1,20 @@
+{
+  "classification": "TP",
+  "confidence_score": 85,
+  "event_id": "cs-dllhijack-tricky-09",
+  "mitre_mapping": {
+    "tactic": "Defense Evasion",
+    "technique": "Masquerading (T1036)"
+  },
+  "override_applied": "none",
+  "processed_at": "2026-06-25T18:45:00Z",
+  "remediation_actions": [
+    "Isolate host",
+    "Terminate process",
+    "Delete malicious file",
+    "Initiate incident response investigation"
+  ],
+  "tenant_id": "tenant-alpha",
+  "threat_reasoning": "The event involves a process named msoia.exe executing from C:\\Users\\Public\\Documents, which constitutes process masquerading as this is a non-standard path for legitimate executables (Base 0 + Process Masquerading (+30) + Unknown Hash Score (+55) = 85). Although the hash is not explicitly flagged by known threat intelligence, the location and naming convention are strong indicators of malicious activity.",
+  "model_used": "models/gemini-3.1-flash-lite"
+}

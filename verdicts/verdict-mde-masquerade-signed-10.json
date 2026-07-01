@@ -1,0 +1,20 @@
+{
+  "classification": "TP",
+  "confidence_score": 55,
+  "event_id": "mde-masquerade-signed-10",
+  "mitre_mapping": {
+    "tactic": "Defense Evasion",
+    "technique": "Masquerading: Match Legitimate Name or Location"
+  },
+  "override_applied": "none",
+  "processed_at": "2026-06-25T19:15:00Z",
+  "remediation_actions": [
+    "Isolate host",
+    "Terminate malicious process",
+    "Delete file from C:\\Windows\\Temp",
+    "Scan for persistence mechanisms"
+  ],
+  "tenant_id": "tenant-beta",
+  "threat_reasoning": "Base 0 + Process masquerading (system process running from non-system path) (+30) + LOLBin spawning shell from cmd.exe (+25) = 55. A system process (svchost.exe) executing from a temporary directory is a classic indicator of compromise, despite the lack of external reputation hits.",
+  "model_used": "models/gemini-3.1-flash-lite"
+}

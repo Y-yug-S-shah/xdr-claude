@@ -1,0 +1,20 @@
+{
+  "classification": "Mid-confidence",
+  "confidence_score": 55,
+  "event_id": "mde-doubleext-02",
+  "mitre_mapping": {
+    "tactic": "Execution",
+    "technique": "Masquerading: Double Extension"
+  },
+  "override_applied": "none",
+  "processed_at": "2026-06-25T16:15:00Z",
+  "remediation_actions": [
+    "isolate_endpoint",
+    "kill_process",
+    "delete_file",
+    "reset_user_password"
+  ],
+  "tenant_id": "tenant-alpha",
+  "threat_reasoning": "The execution of a double-extension file (invoice-print.pdf.exe) originating from Outlook is a high-risk indicator of email-based malware delivery. Base 0 + Process masquerading/suspicious extension (+30) + parent process Outlook.exe (+25) = 55. While threat intelligence is currently neutral, the behavioral pattern warrants manual investigation.",
+  "model_used": "models/gemini-3.1-flash-lite"
+}
